@@ -325,8 +325,8 @@ def borderless(table, image, res_cells):
             cv2.rectangle(im2, (tbox[0], tbox[1]), (tbox[2], tbox[3]), colors[no % len(colors)], 1)
             # print(tbox)
 
-    # cv2.imshow("text chunks", im2)
-    # cv2.waitKey(0)
+    cv2.imshow("text chunks", im2)
+    cv2.waitKey(0)
 
     def rowstart(val):
         r = 0
@@ -369,15 +369,15 @@ def borderless(table, image, res_cells):
         for box in final:
             end_col, end_row, start_col, start_row = colend(box[2]), rowend(box[3]), colstart(box[0]), rowstart(box[1])
 
-            one = [int(box[0]), int(box[1])]
+            one = [int(box[0]) - 10, int(box[1]) + 10]
             two = [int(box[0]), int(box[3])]
-            three = [int(box[2]), int(box[3])]
+            three = [int(box[2]) - 10, int(box[3]) + 10]
             four = [int(box[2]), int(box[1])]
 
-            cell = {'end_col': [end_col, one],
-                    'end_row': [end_row, two],
-                    'start_col': [start_col, three],
-                    'start_row': [start_row, four]}
+            cell = [[end_col, one],
+                    # [start_col, two],
+                    [end_row, three]]
+                    # [start_row, four]]
 
             structure.append(cell)
 

@@ -109,8 +109,8 @@ def line_detection(image):
     #     cv2.line(image, (x1,y1-5), (x2,y2-5), (0, 255, 0), 1)
 
     # print(image.shape)
-    # cv2.imshow("image",image)
-    # cv2.waitKey(0)
+    cv2.imshow("image",image)
+    cv2.waitKey(0)
     ####################################################################
 
     ## Selection of best lines from all the vertical lines detected ##

@@ -40,20 +40,22 @@ def border(table, image):
 
             end_col, end_row, start_col, start_row = span(box, X, Y)
 
-            one = [int(cellBox[0] + box[0]), int(cellBox[1] + box[1])]
+            one = [int(cellBox[0] + box[0] - 10), int(cellBox[1] + box[1]) + 10]
             two = [int(cellBox[0] + box[0]), int(cellBox[3] + box[1])]
-            three = [int(cellBox[2] + box[0]), int(cellBox[3] + box[1])]
+            three = [int(cellBox[2] + box[0] - 10), int(cellBox[3] + box[1]) + 10]
             four = [int(cellBox[2] + box[0]), int(cellBox[1] + box[1])]
 
-            cell = {'end_col': [end_col, one],
-                    'end_row': [end_row, two],
-                    'start_col': [start_col, three],
-                    'start_row': [start_row, four]}
+            cell = [[end_col, one],
+                    # [start_col, two],
+                    [end_row, three]]
+                    # [start_row, four]]
+
 
             structure.append(cell)
-    ## to visualize the detected text areas
-    # cv2.imshow("detected cells",imag)
-    # cv2.waitKey(0)
+
+    # to visualize the detected text areas
+    cv2.imshow("detected cells",imag)
+    cv2.waitKey(0)
     return tuple(table), tuple(structure)
 
 # border([111,228,680,480],cv2.imread('cTDaR_t10039.jpg'))
