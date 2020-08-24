@@ -53,11 +53,8 @@ def table_rec(image_path=image_path, config_fname=config_fname, checkpoint_path=
             if len(res_cell) != 0:
                 for no, res in enumerate(res_bless):
                     tables.append(borderless(res, cv2.imread(i), res_cell))
-
-        print('got it')
-        print(tables)
-        print('-'*150)
+    return tables
 
 
 if __name__ == '__main__':
-    main()
+    table_rec()
