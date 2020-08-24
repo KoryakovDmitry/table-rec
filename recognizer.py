@@ -13,7 +13,7 @@ xmlPath = '/home/ochinchin/Initflow/OcrRPA/cascade20/table-rec/xml/'
 config_fname = '/home/ochinchin/Initflow/OcrRPA/cascade20/table-rec/cascade_mask_rcnn_hrnetv2p_w32_20e.py'
 checkpoint_path = "/home/ochinchin/Initflow/OcrRPA/cascade20/table-rec/epoch_36_mmdet20_converted.pth"
 device = 'cuda:0'
-threshold = .85
+threshold = .55
 
 
 def main(image_path=image_path, config_fname=config_fname, checkpoint_path=checkpoint_path,
