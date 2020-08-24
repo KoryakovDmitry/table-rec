@@ -16,7 +16,7 @@ device = 'cuda:0'
 threshold = .55
 
 
-def main(image_path=image_path, config_fname=config_fname, checkpoint_path=checkpoint_path,
+def table_rec(image_path=image_path, config_fname=config_fname, checkpoint_path=checkpoint_path,
          device=device, threshold=threshold):
     model = init_detector(config=config_fname, checkpoint=checkpoint_path, device=device)
 
