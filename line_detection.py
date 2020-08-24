@@ -103,17 +103,17 @@ def line_detection(image):
     # Sorting the list of detected lines by X1
     ver_lines = sorted(temp_line, key=lambda x: x[0])
 
-    ## Uncomment this part to visualize the lines detected on the image ##
+    # Uncomment this part to visualize the lines detected on the image ##
     # print(len(ver_lines))
     # for x1, y1, x2, y2 in ver_lines:
     #     cv2.line(image, (x1,y1-5), (x2,y2-5), (0, 255, 0), 1)
 
     # print(image.shape)
-    cv2.imshow("image",image)
-    cv2.waitKey(0)
+    # cv2.imshow("image",image)
+    # cv2.waitKey(0)
     ####################################################################
 
-    ## Selection of best lines from all the vertical lines detected ##
+    # Selection of best lines from all the vertical lines detected ##
     lastx1 = -111111
     lines_y1 = []
     lines_y2 = []

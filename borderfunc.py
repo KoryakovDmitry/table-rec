@@ -2,7 +2,7 @@ import cv2
 from line_detection import line_detection
 
 
-##################  Functions required for Border table Recognition #################
+###############  Functions required for Border table Recognition #################
 
 ## Return the intersection of lines only if intersection is present ##
 # Input : x1, y1, x2, y2, x3, y3, x4, y4 (1: vertical, 2: horizontal)
@@ -28,7 +28,7 @@ def extract_table(table_body, __line__, lines=None):
         temp_lines_hor, temp_lines_ver = lines
 
     if len(temp_lines_hor) == 0 or len(temp_lines_ver) == 0:
-        print("Either Horizontal Or Vertical Lines Not Detected")
+        # ("Either Horizontal Or Vertical Lines Not Detected")
         return None
 
     table = table_body.copy()
@@ -36,7 +36,7 @@ def extract_table(table_body, __line__, lines=None):
     y = 0
     k = 0
     points = []
-    print("[Table status] : Processing table with lines")
+    # ("[Table status] : Processing table with lines")
     # Remove same lines detected closer
     for x1, y1, x2, y2 in temp_lines_ver:
         point = []
@@ -60,8 +60,8 @@ def extract_table(table_body, __line__, lines=None):
     box = []
     flag = 1
     lastCache = []
-    ## creating bounding boxes of cells from the points detected 
-    ## This is still under work and might fail on some images
+    # creating bounding boxes of cells from the points detected
+    # This is still under work and might fail on some images
     for i, row in enumerate(points):
         limitj = len(row)
         currentVala = []
@@ -111,7 +111,7 @@ def extract_table(table_body, __line__, lines=None):
         if (i != 0):
             lastCache = currentVala
 
-    ## Visualizing the cells ##
+    # Visualizing the cells #
     # count = 1
     # for i in box:
     #     cv2.rectangle(table_body, (i[0], i[1]), (i[6], i[7]), (int(i[7]%255),0,int(i[0]%255)), 2)
@@ -125,24 +125,24 @@ def extract_table(table_body, __line__, lines=None):
 # extract_table(cv2.imread("E:\\KSK\\KSK ML\\KSK PAPERS\\TabXNet\\For Git\\images\\table.PNG"),1,lines=None)
 
 
-def findX(X, x):
+def find_x(X, x):
     return X.index(x)
 
 
-def findY(Y, y):
+def find_y(Y, y):
     return Y.index(y)
 
 
 def span(box, X, Y):
-    start_col = findX(X, box[0])  ## x1
-    end_col = findX(X, box[4]) - 1  ## x3
-    start_row = findY(Y, box[1])  ## y1
-    end_row = findY(Y, box[3]) - 1  ## y2
+    start_col = find_x(X, box[0])  # x1
+    end_col = find_x(X, box[4]) - 1  # x3
+    start_row = find_y(Y, box[1])  # y1
+    end_row = find_y(Y, box[3]) - 1  # y2
     # print(end_col,end_row,start_col,start_row)
     return end_col, end_row, start_col, start_row
 
 
-def extractText(img):
+def extract_text(img):
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     _, thresh1 = cv2.threshold(gray, 0, 255, cv2.THRESH_OTSU | cv2.THRESH_BINARY_INV)
     # cv2_imshow(thresh1)

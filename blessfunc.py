@@ -5,7 +5,7 @@ from borderfunc import extract_table
 
 ## Input : roi of one cell
 ## Output : bounding box for the text in that cell
-def extractTextBless(img):
+def extract_text_bless(img):
     return_arr = []
     h, w = img.shape[0:2]
     base_size = h + 14, w + 14, 3
@@ -30,8 +30,8 @@ def extractTextBless(img):
     return return_arr
 
 
-## Input : Roi of Table , Orignal Image, Cells Detected
-## Output : Returns XML element which has contains bounding box of textchunks
+# Input : Roi of Table , Orignal Image, Cells Detected
+# Output : Roi 0f Table, location and Roi of cells
 def borderless(table, image, res_cells):
     cells = []
     x_lines = []
@@ -139,7 +139,7 @@ def borderless(table, image, res_cells):
     row.append(table[3])
     maxr = 0
     for r2 in final_rows:
-        print(r2)
+        # print(r2)
         if len(r2) > maxr:
             maxr = len(r2)
 
@@ -157,7 +157,7 @@ def borderless(table, image, res_cells):
                 if col[0] < lastx[n][0]:
                     lastx[n][0] = col[0]
 
-    print(lastx)
+    # print(lastx)
     for r2 in final_rows:
         if len(r2) != 0:
             r = 0
@@ -175,7 +175,7 @@ def borderless(table, image, res_cells):
                     if col[2] > lastx[n][1]:
                         lastx[n][1] = col[2]
 
-    print(lastx)
+    # print(lastx)
     col = np.zeros(maxr + 1)
     col[0] = table[0]
     prev = 0
@@ -201,43 +201,43 @@ def borderless(table, image, res_cells):
         cv2.line(im2, (table[0], c), (table[2], c), (255, 0, 0), 1)
 
     # cv2_imshow(im2)
-    print("table:", table)
+    # print("table:", table)
     # for r in row:
     #   cv2.line(im2,(r,table[1]),(r,table[3]),(0,255,0),1)
     # for c in col:
     #   cv2.line(im2,(c,table[1]),(c,table[3]),(0,255,0),1)
     final = extract_table(image[table[1]:table[3], table[0]:table[2]], 0, (y_lines, x_lines))
 
-    cellBoxes = []
+    cell_boxes = []
     img4 = image.copy()
     for box in final:
-        cellBox = extractTextBless(image[box[1]:box[3], box[0]:box[4]])
+        cellBox = extract_text_bless(image[box[1]:box[3], box[0]:box[4]])
         for cell in cellBox:
-            cellBoxes.append([box[0] + cell[0], box[1] + cell[1], cell[2], cell[3]])
+            cell_boxes.append([box[0] + cell[0], box[1] + cell[1], cell[2], cell[3]])
             cv2.rectangle(img4, (box[0] + cell[0], box[1] + cell[1]),
                           (box[0] + cell[0] + cell[2], box[1] + cell[1] + cell[3]), (255, 0, 0), 2)
     # cv2_imshow(img4)
 
     the_last_y = -1
-    cellBoxes = sorted(cellBoxes, key=lambda x: x[1])
-    cellBoxes2BeMerged = []
-    cellBoxes2BeMerged.append([])
+    cell_boxes = sorted(cell_boxes, key=lambda x: x[1])
+    cell_boxes2be_merged = []
+    cell_boxes2be_merged.append([])
     rowCnt = 0
-    for cell in cellBoxes:
+    for cell in cell_boxes:
         if (the_last_y == -1):
             the_last_y = cell[1]
-            cellBoxes2BeMerged[rowCnt].append(cell)
+            cell_boxes2be_merged[rowCnt].append(cell)
             continue
         if (abs(cell[1] - the_last_y) < 8):
-            cellBoxes2BeMerged[rowCnt].append(cell)
+            cell_boxes2be_merged[rowCnt].append(cell)
         else:
             the_last_y = cell[1]
             rowCnt += 1
-            cellBoxes2BeMerged.append([])
-            cellBoxes2BeMerged[rowCnt].append(cell)
+            cell_boxes2be_merged.append([])
+            cell_boxes2be_merged[rowCnt].append(cell)
 
-    MergedBoxes = []
-    for cellrow in cellBoxes2BeMerged:
+    merged_boxes = []
+    for cellrow in cell_boxes2be_merged:
         cellrow = sorted(cellrow, key=lambda x: x[0])
         cur_cell = -1
         for c, cell in enumerate(cellrow):
@@ -245,7 +245,7 @@ def borderless(table, image, res_cells):
                 cur_cell = cell
                 continue
             if (len(cellrow) == 1):
-                MergedBoxes.append(cell)
+                merged_boxes.append(cell)
                 break
             if (abs((cur_cell[0] + cur_cell[2]) - cell[0]) < 10):
                 cur_cell[2] = cur_cell[2] + cell[2] + (cell[0] - (cur_cell[0] + cur_cell[2]))
@@ -254,18 +254,18 @@ def borderless(table, image, res_cells):
             else:
                 cur_cell[2] = cur_cell[0] + cur_cell[2]
                 cur_cell[3] = cur_cell[1] + cur_cell[3]
-                MergedBoxes.append(cur_cell)
+                merged_boxes.append(cur_cell)
                 cur_cell = cell
         cur_cell[2] = cur_cell[0] + cur_cell[2]
         cur_cell[3] = cur_cell[1] + cur_cell[3]
-        MergedBoxes.append(cur_cell)
+        merged_boxes.append(cur_cell)
 
     im3 = image.copy()
-    for bx in MergedBoxes:
+    for bx in merged_boxes:
         cv2.rectangle(im3, (bx[0], bx[1]), (bx[2], bx[3]), (255, 0, 0), 2)
     # cv2_imshow(im3)
-    TextChunks = []
-    TextChunks.append([])
+    text_chunks = []
+    text_chunks.append([])
     rcnt = 0
     ycnt = -1
 
@@ -275,7 +275,7 @@ def borderless(table, image, res_cells):
             ycnt = box[1]
         tcurcell = []
         mcurcell = []
-        for mbox in MergedBoxes:
+        for mbox in merged_boxes:
             if (mbox[0] >= box[0] and mbox[1] >= box[1] and mbox[2] <= box[4] and mbox[3] <= box[3]):
                 if (len(tcurcell) == 0):
                     tcurcell = mbox
@@ -298,35 +298,35 @@ def borderless(table, image, res_cells):
 
         if (abs(ycnt - box[1]) > 10):
             rcnt += 1
-            TextChunks.append([])
+            text_chunks.append([])
             ycnt = box[1]
 
         if (len(tcurcell) == 0):
             if (len(mcurcell) == 0):
                 continue
             else:
-                TextChunks[rcnt].append(mcurcell)
+                text_chunks[rcnt].append(mcurcell)
         else:
             if (len(mcurcell) == 0):
-                TextChunks[rcnt].append(tcurcell)
+                text_chunks[rcnt].append(tcurcell)
             else:
                 if (abs(mcurcell[0] - tcurcell[0]) <= 20 and abs(mcurcell[1] - tcurcell[1]) <= 20 and abs(
                         mcurcell[2] - tcurcell[2]) <= 20 and abs(mcurcell[3] - tcurcell[3]) <= 20):
-                    TextChunks[rcnt].append(tcurcell)
+                    text_chunks[rcnt].append(tcurcell)
                 elif ((abs(mcurcell[0] - tcurcell[0]) <= 20 and abs(mcurcell[2] - tcurcell[2]) <= 20) or (
                         abs(mcurcell[1] - tcurcell[1]) <= 20 or abs(mcurcell[3] - tcurcell[3]) <= 20)):
-                    TextChunks[rcnt].append(mcurcell)
+                    text_chunks[rcnt].append(mcurcell)
                 else:
-                    TextChunks[rcnt].append(tcurcell)
+                    text_chunks[rcnt].append(tcurcell)
 
     colors = [(255, 0, 0), (0, 255, 0), (0, 0, 255), (125, 125, 0), (0, 255, 255)]
-    for no, r in enumerate(TextChunks):
+    for no, r in enumerate(text_chunks):
         for tbox in r:
             cv2.rectangle(im2, (tbox[0], tbox[1]), (tbox[2], tbox[3]), colors[no % len(colors)], 1)
             # print(tbox)
 
-    cv2.imshow("text chunks", im2)
-    cv2.waitKey(0)
+    # cv2.imshow("text chunks", im2)
+    # cv2.waitKey(0)
 
     def rowstart(val):
         r = 0
@@ -365,19 +365,19 @@ def borderless(table, image, res_cells):
             return r - 1
 
     structure = list()
-    for final in TextChunks:
+    for final in text_chunks:
         for box in final:
             end_col, end_row, start_col, start_row = colend(box[2]), rowend(box[3]), colstart(box[0]), rowstart(box[1])
 
-            one = [int(box[0]) - 10, int(box[1]) + 10]
+            one = [int(box[0]), int(box[1])]
             two = [int(box[0]), int(box[3])]
-            three = [int(box[2]) - 10, int(box[3]) + 10]
+            three = [int(box[2]), int(box[3])]
             four = [int(box[2]), int(box[1])]
 
             cell = [[end_col, one],
                     # [start_col, two],
                     [end_row, three]]
-                    # [start_row, four]]
+            # [start_row, four]]
 
             structure.append(cell)
 
