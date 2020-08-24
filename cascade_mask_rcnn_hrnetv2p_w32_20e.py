@@ -1,4 +1,4 @@
-_base_ = '/home/ochinchin/Initflow/OcrRPA/cascade20/table-rec/mmdetection/configs/cascade_rcnn/cascade_mask_rcnn_r50_fpn_1x_coco.py'
+_base_ = '/content/mmdetection/configs/cascade_rcnn/cascade_mask_rcnn_r50_fpn_1x_coco.py'
 model = dict(
     pretrained='open-mmlab://msra/hrnetv2_w32',
     backbone=dict(
