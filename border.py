@@ -24,14 +24,13 @@ def border(table, image):
 
     X.sort()
     Y.sort()
-    # print("X = ",X)
-    # print("Y = ",Y)
+
 
     cv2.rectangle(imag, (table[0], table[1]), (table[2], table[3]), (0, 255, 0), 2)
     structure = list()
     for box in final:
         if box[0] > table[0] - 5 and box[1] > table[1] - 5 and box[2] < table[2] + 5 and box[3] < table[3] + 5:
-            cellBox = extractText(imag[box[1]:box[3], box[0]:box[4]])
+            cellBox = extract_text(imag[box[1]:box[3], box[0]:box[4]])
             if cellBox is None:
                 continue
             ## to visualize the detected text areas
