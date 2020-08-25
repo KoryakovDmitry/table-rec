@@ -1,7 +1,7 @@
-#invoice-recognition
+# invoice-recognition
 
 
-##Setup
+## Setup
 pip install torch==1.4.0 torchvision==0.5.0
 pip install -q mmcv terminaltables
 git clone --branch new "https://github.com/KoryakovDmitry/mmdetection.git"
